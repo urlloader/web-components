@@ -1,6 +1,9 @@
 // Create a class for the element
 class CardBox extends HTMLElement
 {
+
+  static get observedAttributes() {return ['src', 'title', 'description']; }
+
   constructor()
   {
     // Always call super first in constructor
@@ -75,6 +78,22 @@ class CardBox extends HTMLElement
 
     applyOutterStyles(document);
   }
+  attributeChangedCallback(name, oldValue, newValue)
+  {
+    switch(name)
+    {
+      case 'title':
+        setText(this.wrapper.querySelector('h3'), newValue);
+        this.wrapper.querySelector('img').setAttribute(name, newValue);
+        break;
+      case 'description':
+        setText(this.wrapper.querySelector('p'), newValue);
+        break;
+      case 'src':
+        this.wrapper.querySelector('img').setAttribute(name, newValue);
+        break;
+    }
+  }
   connectedCallback()
   {
     bindEvents(this.events, this.wrapper);
@@ -82,6 +101,22 @@ class CardBox extends HTMLElement
   disconnectedCallback()
   {
     unbindEvents(this.events, this.wrapper);
+  }
+}
+
+function setText(element, text)
+{
+  if (element)
+  {
+    while (element.firstChild)
+    {
+      element.removeChild(element.firstChild);
+    }
+  }
+
+  if (text)
+  {
+    element.appendChild(element.ownerDocument.createTextNode(text));
   }
 }
 
